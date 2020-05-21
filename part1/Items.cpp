@@ -4,7 +4,6 @@
 #include <Adafruit_ST7735.h>
 #include <SPI.h>
 #include <TimeLib.h>
-#include "global_defines.h"
 
 // definition of the .csv header
 const char* EsmBaseItem::header =  "quest_name;item_name;type;prompt;left_label;right_label;resolution;response;timestamp";
@@ -33,7 +32,7 @@ void EsmBaseItem::printPrompt(const char* prompt, unsigned int x, unsigned int y
       {
         workPrompt[lastSpace] = 0;
         tft->print(&workPrompt[lineStart]);
-        lineStart = maxLength + 1;
+        lineStart = lastSpace + 1;
         tft->setCursor(x, y + LINE_HEIGHT * ++numLines);
       }
       else
@@ -59,7 +58,7 @@ unsigned int EsmItemLikert::yLabels = 0;
 unsigned int EsmItemLikert::scaleOffset = 0;
 unsigned int EsmItemLikert::maxXPrompt = 0;
 
-EsmItemLikert::EsmItemLikert(char* parentQuestionnaire, char* itemName, char* prompt, unsigned int range, char* leftLabel, char* rightLabel)
+EsmItemLikert::EsmItemLikert(const char* parentQuestionnaire, const char* itemName, const char* prompt, byte range, const char* leftLabel, const char* rightLabel)
 {
   this->range = range;
   strcpy(this->parentQuestionnaire, parentQuestionnaire);

@@ -35,7 +35,7 @@
 
 // define time step in ms for delay()
 
-#define FRAMETIME 100;
+#define FRAMETIME 100
 
 // Maxima definitions
 

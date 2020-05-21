@@ -4,9 +4,12 @@
 #include <Adafruit_ST7735.h>
 #include <SPI.h>
 #include <TimeLib.h>
+#include "global_defines.h"
 
 EsmBaseItem* currentItem = nullptr; // the base item pointer to later hold our item
 
+Adafruit_ST7735* tft = nullptr;
+  
 byte getButtonMask() // function to get the currently pressed button, and compress that into a single byte
 {
   byte buttons = 0x0000;

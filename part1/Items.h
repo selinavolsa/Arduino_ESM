@@ -2,6 +2,7 @@
 #define ES_ITEMS_h
 
 #include "Arduino.h"
+#include "global_defines.h"
 
 // EsmBaseItem is the base class of all items, and defines a few methods and members all items use
 class EsmBaseItem
@@ -27,7 +28,7 @@ protected:
 class EsmItemLikert : public EsmBaseItem
 {
 public:
-  EsmItemLikert(char* parentQuestionnaire, char* itemName, char* prompt, byte range, char* leftLabel, char* rightLabel);
+  EsmItemLikert(const char* parentQuestionnaire, const char* itemName, const char* prompt, byte range, const char* leftLabel, const char* rightLabel);
 
   void update(byte buttonMask);
   void draw();
