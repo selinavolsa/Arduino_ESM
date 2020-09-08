@@ -8,7 +8,7 @@
 class EsmBaseItem
 {
 public:
-  virtual void update(byte buttonMask){};
+  virtual void update(byte pressedMask, byte justPressedMask){};
   virtual void draw(){};
   virtual void result(char* logstring){};
   
@@ -30,7 +30,7 @@ class EsmItemLikert : public EsmBaseItem
 public:
   EsmItemLikert(const char* parentQuestionnaire, const char* itemName, const char* prompt, byte range, const char* leftLabel, const char* rightLabel);
 
-  void update(byte buttonMask);
+  void update(byte pressedMask, byte justPressedMask);
   void draw();
   void result(char* logstring);
 

@@ -15,6 +15,8 @@
 #define BTN_DOWN   1 << 3
 #define BTN_ACCEPT 1 << 4
 
+#define DEBOUNCE_INTERVAL 10
+
 // Color definitions
 
 #define BLACK    0x0000

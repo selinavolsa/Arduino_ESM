@@ -141,15 +141,15 @@ void EsmItemLikert::drawLikert()
   tft->fillCircle(xScale + (value - 1) * scaleOffset, yScale, radiusSelector, RED); // fill only the currently selecte circle with red
 }
 
-void EsmItemLikert::update(byte buttonMask)
+void EsmItemLikert::update(byte pressedMask, byte justPressedMask)
 {
-  if(buttonMask & BTN_LEFT)
+  if(pressedMask & BTN_LEFT)
   {
     // if the left button is pressed, decrease the value (if possible)
     value = value > 1 ? value -1 : 1;
     drawLikert();
   }
-  if(buttonMask & BTN_RIGHT)
+  if(pressedMask & BTN_RIGHT)
   {
     // if the right button is pressed, increase the value (if possible
     value = value < range ? value + 1 : range;
