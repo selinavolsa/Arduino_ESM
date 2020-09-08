@@ -66,7 +66,7 @@ void setup() {
 
 void loop() {
   updateButtonMasks();
-  if(pressedMask & BTN_ACCEPT)
+  if(justPressedMask & BTN_ACCEPT)
   {
     // if the accept button is pressed, print the current result of the item on the serial connection
     char logstring[LOGSTRINGLENGTH];
