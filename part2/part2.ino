@@ -9,37 +9,24 @@
 EsmBaseItem* currentItem = nullptr; // the base item pointer to later hold our item
 
 Adafruit_ST7735* tft = nullptr;
-
-byte pressedMask = 0x0000;
-byte justPressedMask = 0x0000;
-
-void updateButtonMasks()
+  
+byte getButtonMask() // function to get the currently pressed button, and compress that into a single byte
 {
-  byte canPressMask = ~ pressedMask;
-  pressedMask = 0x0000;
+  byte buttons = 0x0000;
 
-  if(digitalRead(PIN_LEFT) == LOW)
+  byte pins[] = {PIN_LEFT, PIN_RIGHT, PIN_UP, PIN_DOWN, PIN_ACCEPT};
+  byte button_codes[] = {BTN_LEFT, BTN_RIGHT, BTN_UP, BTN_DOWN, BTN_ACCEPT};
+  int numCodes = 5;
+
+  for(int i = 0; i < numCodes; i++) // loop through all pins and set the pins appropriately
   {
-    pressedMask |= BTN_LEFT;
-  }
-  if(digitalRead(PIN_RIGHT) == LOW)
-  {
-    pressedMask |= BTN_RIGHT;
-  }
-  if(digitalRead(PIN_UP) == LOW)
-  {
-    pressedMask |= BTN_UP;
-  }
-  if(digitalRead(PIN_DOWN) == LOW)
-  {
-    pressedMask |= BTN_DOWN;
-  }
-  if(digitalRead(PIN_ACCEPT) == LOW)
-  {
-    pressedMask |= BTN_ACCEPT;
+    if(digitalRead(pins[i]) == LOW)
+    {
+      buttons |= button_codes[i];
+    }
   }
 
-  justPressedMask = pressedMask & canPressMask;
+  return buttons;
 }
 
 void setup() {
@@ -64,8 +51,8 @@ void setup() {
 }
 
 void loop() {
-  updateButtonMasks();
-  if(justPressedMask & BTN_ACCEPT)
+  byte buttonMask = getButtonMask(); // get the currently pressed buttons
+  if(buttonMask & BTN_ACCEPT)
   {
     // if the accept button is pressed, print the current result of the item on the serial connection
     char logstring[LOGSTRINGLENGTH];
@@ -75,7 +62,7 @@ void loop() {
   else
   {
     // if the accept button is not pressed, forward the updating to the item
-    currentItem->update(pressedMask, justPressedMask);
+    currentItem->update(buttonMask);
   }
   delay(FRAMETIME);
 }
