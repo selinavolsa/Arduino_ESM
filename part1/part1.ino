@@ -2,6 +2,7 @@
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7735.h>
+#include <Bounce2.h>
 #include <SPI.h>
 #include <TimeLib.h>
 #include "global_defines.h"
@@ -13,31 +14,28 @@ Adafruit_ST7735* tft = nullptr;
 byte pressedMask = 0x0000;
 byte justPressedMask = 0x0000;
 
+Button leftButton;
+Button rightButton;
+Button upButton;
+Button downButton;
+Button acceptButton;
+
 void updateButtonMasks()
 {
+  leftButton.update();
+  rightButton.update();
+  upButton.update();
+  downButton.update();
+  acceptButton.update();
+
   byte canPressMask = ~ pressedMask;
   pressedMask = 0x0000;
 
-  if(digitalRead(PIN_LEFT) == LOW)
-  {
-    pressedMask |= BTN_LEFT;
-  }
-  if(digitalRead(PIN_RIGHT) == LOW)
-  {
-    pressedMask |= BTN_RIGHT;
-  }
-  if(digitalRead(PIN_UP) == LOW)
-  {
-    pressedMask |= BTN_UP;
-  }
-  if(digitalRead(PIN_DOWN) == LOW)
-  {
-    pressedMask |= BTN_DOWN;
-  }
-  if(digitalRead(PIN_ACCEPT) == LOW)
-  {
-    pressedMask |= BTN_ACCEPT;
-  }
+  pressedMask |= BTN_LEFT * leftButton.pressed();
+  pressedMask |= BTN_RIGHT * rightButton.pressed();
+  pressedMask |= BTN_UP * upButton.pressed();
+  pressedMask |= BTN_DOWN * downButton.pressed();
+  pressedMask |= BTN_ACCEPT * acceptButton.pressed();
 
   justPressedMask = pressedMask & canPressMask;
 }
@@ -53,10 +51,13 @@ void setup() {
   tft->fillScreen(BLACK);
   tft->setRotation(3); // set the rotation of the display (this is dependent on how the display will be oriented
 
+  Button* buttons[] = {&leftButton, &rightButton, &upButton, &downButton, &acceptButton};
   byte pins[] = {PIN_LEFT, PIN_RIGHT, PIN_UP, PIN_DOWN, PIN_ACCEPT};
   for(int i = 0; i < 5; i++) // initialize all pins as inputs, using the internal pullup resistors
   {
-    pinMode(pins[i], INPUT_PULLUP);
+    buttons[i]->attach(pins[i], INPUT_PULLUP);
+    buttons[i]->interval(DEBOUNCE_INTERVAL);
+    buttons[i]->setPressedState(LOW);
   }
 
   currentItem = new EsmItemLikert("Foo", "Bar", "A sample likert type item.", 7, "1", "7"); // create a sample item
