@@ -1,0 +1,26 @@
+{
+  "study_name": "demo study",
+  "data": [
+    {
+      "name": "signal 1",
+      "items": [
+        {
+          "item": "item 1",
+          "type": "likert",
+          "prompt": "First Item of Questionnaire.",
+          "res": 5,
+          "l_lab": "No",
+          "r_lab": "Yes"
+        },
+        {
+          "item": "item 2",
+          "type": "likert",
+          "prompt": "Second Item of Questionnaire.",
+          "res": 7,
+          "l_lab": "No",
+          "r_lab": "Yes"
+        }
+      ]
+    }
+  ]
+}

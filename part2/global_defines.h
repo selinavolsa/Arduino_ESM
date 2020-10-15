@@ -15,6 +15,8 @@
 #define BTN_DOWN   1 << 3
 #define BTN_ACCEPT 1 << 4
 
+#define DEBOUNCE_INTERVAL 10
+
 // Color definitions
 
 #define BLACK    0x0000
@@ -33,6 +35,8 @@
 #define PIN_DOWN 15
 #define PIN_ACCEPT 14
 
+#define SD_CS 7
+
 // define time step in ms for delay()
 
 #define FRAMETIME 100
@@ -48,6 +52,7 @@
 // Filepath definitions
 
 #define LOGFILE "aesmlog.csv"
+#define CONFIGFILE "config.txt"
 
 class Adafruit_ST7735;
 

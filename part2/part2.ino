@@ -1,38 +1,49 @@
-#include "Items.h"
+#include "QuestionnaireState.h"
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7735.h>
 #include <SPI.h>
+#include <SD.h>
 #include <TimeLib.h>
 #include "global_defines.h"
 
-EsmBaseItem* currentItem = nullptr; // the base item pointer to later hold our item
+QuestionnaireState* currentState = nullptr; // the base item pointer to later hold our item
 
 Adafruit_ST7735* tft = nullptr;
-  
-byte getButtonMask() // function to get the currently pressed button, and compress that into a single byte
+
+byte pressedMask = 0x0000;
+byte justPressedMask = 0x0000;
+
+void updateButtonMasks()
 {
-  byte buttons = 0x0000;
+  byte canPressMask = ~ pressedMask;
+  pressedMask = 0x0000;
 
-  byte pins[] = {PIN_LEFT, PIN_RIGHT, PIN_UP, PIN_DOWN, PIN_ACCEPT};
-  byte button_codes[] = {BTN_LEFT, BTN_RIGHT, BTN_UP, BTN_DOWN, BTN_ACCEPT};
-  int numCodes = 5;
-
-  for(int i = 0; i < numCodes; i++) // loop through all pins and set the pins appropriately
+  if(digitalRead(PIN_LEFT) == LOW)
   {
-    if(digitalRead(pins[i]) == LOW)
-    {
-      buttons |= button_codes[i];
-    }
+    pressedMask |= BTN_LEFT;
+  }
+  if(digitalRead(PIN_RIGHT) == LOW)
+  {
+    pressedMask |= BTN_RIGHT;
+  }
+  if(digitalRead(PIN_UP) == LOW)
+  {
+    pressedMask |= BTN_UP;
+  }
+  if(digitalRead(PIN_DOWN) == LOW)
+  {
+    pressedMask |= BTN_DOWN;
+  }
+  if(digitalRead(PIN_ACCEPT) == LOW)
+  {
+    pressedMask |= BTN_ACCEPT;
   }
 
-  return buttons;
+  justPressedMask = pressedMask & canPressMask;
 }
 
-void setup() {
-  Serial.begin(9600);
-  Serial.println(EsmBaseItem::header); // print the header on the serial connection
-  
+void setup() { 
   setTime(0,0,0,1,6,2020); // set the time to some arbitrary value, just so the timestamp will work
   
   tft = new Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST); // create the pointer to the display object
@@ -46,23 +57,23 @@ void setup() {
     pinMode(pins[i], INPUT_PULLUP);
   }
 
-  currentItem = new EsmItemLikert("Foo", "Bar", "A sample likert type item.", 7, "1", "7"); // create a sample item
-  currentItem->draw(); // draw the item
+  pinMode(SD_CS, OUTPUT);
+
+  if(!SD.begin(SD_CS))
+  {
+    return;
+  }
+
+  
+
+  currentState = new QuestionnaireState();
+  currentState->setup((char*)"signal 1");
 }
 
 void loop() {
-  byte buttonMask = getButtonMask(); // get the currently pressed buttons
-  if(buttonMask & BTN_ACCEPT)
-  {
-    // if the accept button is pressed, print the current result of the item on the serial connection
-    char logstring[LOGSTRINGLENGTH];
-    currentItem->result(logstring);
-    Serial.println(logstring);
-  }
-  else
-  {
-    // if the accept button is not pressed, forward the updating to the item
-    currentItem->update(buttonMask);
-  }
+  updateButtonMasks();
+
+  currentState->update(pressedMask, justPressedMask);
+  
   delay(FRAMETIME);
 }
